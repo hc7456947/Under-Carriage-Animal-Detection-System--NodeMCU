@@ -9,11 +9,11 @@ uint32_t tsLastReport = 0;
 int inputPin = 19;
 const int led = 13;
 const char* ssid = "OPPO A15s";   // your network SSID (name)
-const char* password = "chauhan123";   // your network password
+const char* password = "chauhan1234";   // your network password
 WiFiClient client;
 
 unsigned long myChannelNumber = 1;
-const char* myWriteAPIKey = "US2FY1KGV7FV8S2Y";
+const char* myWriteAPIKey = "M7QHA66NUJX457ZF";
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 20000;
@@ -48,79 +48,71 @@ void setup()
   delay(5000);
 }
 
-void loop()
-{
-  digitalWrite(led, HIGH);
-  lcd.clear();
-  lcd.backlight();
-  lcd.setCursor(2, 1);
-  lcd.print("READY TO GO");
-
-  Serial.print("Ambient = ");
-  Serial.print(mlx.readAmbientTempC());
-  Serial.print("*C\tObject = ");
-  Serial.print(mlx.readObjectTempC());
-  Serial.println("*C");
-  Serial.print("Ambient = ");
-  Serial.print(mlx.readAmbientTempF());
-  Serial.print("*F\tObject = ");
-  Serial.print(mlx.readObjectTempF());
-  Serial.println("*F");
-
-  int tt = mlx.readObjectTempC();
-  int ts = 23;
-
-  int val = digitalRead(inputPin);
-  Serial.println(val);
-  if (val == 1)
-  {
-    digitalWrite(led, LOW);
+void loop() {
+    digitalWrite(led, HIGH);
     lcd.clear();
     lcd.backlight();
-    lcd.setCursor(0, 0);
-    lcd.print("ANIMAL  DETECTED");
-    delay(1000);
-  }
-  else if (val == 0)
-  {
-    if (tt > ts)
-    {
-      digitalWrite(led, LOW);
-      lcd.clear();
-      lcd.backlight();
-      lcd.setCursor(0, 1);
-      lcd.print("ANIMAL  DETECTED");
-      delay(1000);
-    }
-    else
-    {
-      SonarSensor(trigPin1, echoPin1);
-      UnderSensor = distance;
-      Serial.println(RearSensor);
-      if (distance < 5)
-      {
+    lcd.setCursor(2, 1);
+    lcd.print("READY TO GO");
+
+    Serial.print("Ambient = ");
+    Serial.print(mlx.readAmbientTempC());
+    Serial.print("*C\tObject = ");
+    Serial.print(mlx.readObjectTempC());
+    Serial.println("*C");
+    Serial.print("Ambient = ");
+    Serial.print(mlx.readAmbientTempF());
+    Serial.print("*F\tObject = ");
+    Serial.print(mlx.readObjectTempF());
+    Serial.println("*F");
+
+    int tt = mlx.readObjectTempC(); // Changed int to float
+    int ts = 27; // You might want to adjust this threshold according to your needs
+    Serial.println(tt); // Corrected Serial printing
+    int val = digitalRead(inputPin);
+    Serial.println(val);
+
+    if (val == 1) {
+        digitalWrite(led, LOW);
         lcd.clear();
         lcd.backlight();
         lcd.setCursor(0, 0);
-        lcd.print("OBJECT  DETECTED");
-        digitalWrite(led, LOW);
+        lcd.print("ANIMAL  DETECTED");
         delay(1000);
-      }
+    } else if (val == 0) {
+        if (tt > ts) {
+            digitalWrite(led, LOW);
+            lcd.clear();
+            lcd.backlight();
+            lcd.setCursor(0, 1);
+            lcd.print("ANIMAL  DETECTED");
+            delay(1000);
+        } else {
+            SonarSensor(trigPin1, echoPin1);
+            UnderSensor = distance;
+            Serial.println(RearSensor);
+            if (distance < 5) {
+                lcd.clear();
+                lcd.backlight();
+                lcd.setCursor(0, 0);
+                lcd.print("OBJECT  DETECTED");
+                digitalWrite(led, LOW);
+                delay(1000);
+            }
 
-      SonarSensor(trigPin2, echoPin2);
-      RearSensor = distance;
-      Serial.println(FrontSensor);
-      if (distance < 4)
-      {
-        lcd.clear();
-        lcd.backlight();
-        lcd.setCursor(0, 1);
-        lcd.print("OBJECT  DETECTED");
-        digitalWrite(led, LOW);
-        delay(1000);
-      }
+            SonarSensor(trigPin2, echoPin2);
+            RearSensor = distance;
+            Serial.println(FrontSensor);
+            if (distance < 4) {
+                lcd.clear();
+                lcd.backlight();
+                lcd.setCursor(0, 1);
+                lcd.print("OBJECT  DETECTED");
+                digitalWrite(led, LOW);
+                delay(1000);
+            }
+        }
     }
-  }
 
   // THINGSPEAK
   if ((millis() - lastTime) > timerDelay)
